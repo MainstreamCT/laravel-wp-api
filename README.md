@@ -1,14 +1,16 @@
 # laravel-wp-api
 
-[![Build Status](https://travis-ci.org/threesquared/laravel-wp-api.svg?branch=master)](https://travis-ci.org/threesquared/laravel-wp-api) [![Latest Stable Version](https://poser.pugx.org/threesquared/laravel-wp-api/v/stable)](https://packagist.org/packages/threesquared/laravel-wp-api)
+[![Latest Stable Version](https://poser.pugx.org/threesquared/laravel-wp-api/v/stable)](https://packagist.org/packages/mainstreamct/laravel-wp-api)
 
-Laravel 5 package for the [Wordpress JSON REST API](https://github.com/WP-API/WP-API)
+*Forked originally from []()*
+
+Laravel 6+ package for the [Wordpress JSON REST API](https://github.com/WP-API/WP-API), with support for MultiSite tenant management automation. Uses [multisite-json-api](https://github.com/remkade/multisite-json-api) on the WordPress side of things.
 
 ## Install
 
 Simply add the following line to your `composer.json` and run install/update:
 
-    "mattwilding/laravel-wp-api": "~2.0"
+    "mainstreamct/laravel-wp-api": "~2.0"
 
 ## Configuration
 
@@ -16,11 +18,11 @@ You will need to add the service provider and optionally the facade alias to you
 
 ```php
 'providers' => array(
-  Mattwilding\LaravelWpApi\LaravelWpApiServiceProvider::class
+  MainstreamCT\WordPressAPI\WordPressAPIServiceProvider::class
 )
 
 'aliases' => array(
-  'WpApi' => Mattwilding\LaravelWpApi\Facades\WpApi::class
+  'WordPressAPI' => MainstreamCT\WordPressAPI\Facades\WordPressAPI::class
 ),
 ```
 
@@ -28,72 +30,79 @@ And publish the package config files to configure the location of your Wordpress
 
     php artisan vendor:publish
 
-### Usage
+Provide the following in your `.env` file:
+```.env
+  WP_API_ENDPOINT=your_site_name
+  WP_API_USERNAME=your_site_admin_username
+  WP_API_PASSWORD=your_site_admin_password
+```
+
+Don't forget to re-cache your configuration!
+
+    php artisan config:cache
+
+## Usage
 
 The package provides a simplified interface to some of the existing api methods documented [here](http://wp-api.org/).
-You can either use the Facade provided or inject the `Mattwilding\LaravelWpApi\WpApi` class.
+You can either use the Facade provided or inject the `MainstreamCT\WordPressAPI\WordPressAPI` class.
 
+### Getters
 #### Posts
 ```php
-WpApi::posts($page);
-
+WordPressAPI::getPosts($page);
 ```
 
 #### Pages
 ```php
-WpApi::pages($page);
-
+WordPressAPI::getPages($page);
 ```
 
 #### Post
 ```php
-WpApi::post($slug);
-
+WordPressAPI::getPostBySlug($slug);
 ```
 
 ```php
-WpApi::postId($id);
-
+WordPressAPI::getPostByID($id);
 ```
 
 #### Categories
 ```php
-WpApi::categories();
-
+WordPressAPI::getCategories();
 ```
 
 #### Tags
 ```php
-WpApi::tags();
-
+WordPressAPI::getTags();
 ```
 
 #### Category posts
 ```php
-WpApi::categoryPosts($slug, $page);
-
+WordPressAPI::getPostsByCategory($slug, $page);
 ```
 
 #### Author posts
 ```php
-WpApi::authorPosts($slug, $page);
-
+WordPressAPI::getPostsByAuthor($slug, $page);
 ```
 
 #### Tag posts
 ```php
-WpApi::tagPosts($slug, $page);
-
+WordPressAPI::getPostsByTags($tags, $page);
 ```
 
 #### Search
 ```php
-WpApi::search($query, $page);
-
+WordPressAPI::searchPosts($query, $page);
 ```
 
 #### Archive
 ```php
-WpApi::archive($year, $month, $page);
+WordPressAPI::getPostsByDate($year, $month, $page);
+```
 
+### Other methods
+#### Deploy Multisite tenant
+```php
+WordPressAPI::deploy($site_name, $blog_title, $email, $password);
 ```

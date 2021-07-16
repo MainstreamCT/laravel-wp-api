@@ -1,12 +1,12 @@
 {
-    "name": "swancreative/laravel-wp-api",
-    "description": "Laravel package for the Wordpress JSON REST API forked from threesquared",
+    "name": "mainstreamct/laravel-wp-api",
+    "description": "Laravel package for the Wordpress JSON REST API forked from threesquared then forked from mattwilding, adding support for WP Multisite configs.",
     "keywords": ["laravel", "package", "wordpress", "API", "REST"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Ben Speakman/Matt Wilding",
-            "email": "support@swancreative.com"
+            "name": "Daniël Kamp",
+            "email": "support@mainstreamct.com"
         }
     ],
     "require": {
@@ -18,14 +18,14 @@
     },
     "autoload": {
         "psr-0": {
-            "Swancreative\\LaravelWpApi\\": "src/"
+            "MainstreamCT\\LaravelWpApi\\": "src/"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Swancreative\\LaravelWpApi\\LaravelWpApiServiceProvider"
+                "MainstreamCT\\LaravelWpApi\\LaravelWpApiServiceProvider"
             ]
         }
     }

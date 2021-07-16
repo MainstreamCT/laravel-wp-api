@@ -1,8 +1,8 @@
-<?php namespace Swancreative\LaravelWpApi;
+<?php namespace MainstreamCT\WordPressAPI;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelWpApiServiceProvider extends ServiceProvider
+class WordPressAPIServiceProvider extends ServiceProvider
 {
 
     /**
@@ -34,7 +34,7 @@ class LaravelWpApiServiceProvider extends ServiceProvider
         $this->app->singleton(WpApi::class, function ($app) {
 
             $endpoint = $this->app['config']->get('wp-api.endpoint');
-            $auth     = $this->app['config']->get('wp-api.auth');
+            $auth     = ['username' => $this->app['config']->get('wp-api.username'), 'password' => $this->app['config']->get('wp-api.password')];
             $client   = $this->app->make('GuzzleHttp\Client');
 
             return new WpApi($endpoint, $client, $auth);

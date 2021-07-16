@@ -1,10 +1,10 @@
-<?php namespace Swancreative\LaravelWpApi;
+<?php namespace MainstreamCT\WordPressAPI;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Str;
 
-class WpApi
-{
+class WordPressAPI {
 
     /**
      * Guzzle client
@@ -31,8 +31,7 @@ class WpApi
      * @param Client $client
      * @param string $auth
      */
-    public function __construct($endpoint, Client $client, $auth = null)
-    {
+    public function __construct($endpoint, Client $client, $auth = null) {
         $this->endpoint = $endpoint;
         $this->client   = $client;
         $this->auth     = $auth;
@@ -44,8 +43,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function posts($page = null)
-    {
+    public function getPosts($page = null) {
         return $this->get('posts', ['page' => $page]);
     }
     /**
@@ -54,8 +52,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function stickies($page = null)
-    {
+    public function getStickies($page = null) {
         return $this->get('posts', ['sticky' => true, 'page' => $page]);
     }
     
@@ -65,8 +62,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function pages($page = null)
-    {
+    public function getPages($page = null) {
         return $this->get('pages', ['page' => $page]);
     }
 
@@ -76,8 +72,7 @@ class WpApi
      * @param  int $id
      * @return array
      */
-    public function postId($id)
-    {
+    public function getPostByID($id) {
         return $this->get("posts/$id");
     }
 
@@ -87,8 +82,7 @@ class WpApi
      * @param  string $slug
      * @return array
      */
-    public function post($slug)
-    {
+    public function getPostBySlug($slug) {
         return $this->get('posts', ['slug' => $slug]);
     }
 
@@ -98,8 +92,7 @@ class WpApi
      * @param  string $slug
      * @return array
      */
-    public function page($slug)
-    {
+    public function getPageBySlug($slug) {
         return $this->get('posts', ['type' => 'page', 'filter' => ['name' => $slug]]);
     }
 
@@ -108,7 +101,7 @@ class WpApi
      *
      * @return array
      */
-    public function categories()
+    public function getCategories()
     {
         return $this->get('categories',['per_page' => 99]);
     }
@@ -118,8 +111,7 @@ class WpApi
      *
      * @return array
      */
-    public function tags($tag=null)
-    {
+    public function getTags($tag=null) {
         if($tag > 0){
           return $this->get('tags/'.$tag, ['per_page' => 99]);
         }
@@ -133,8 +125,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function parentPosts($parent = null, $page = null, $pp = null)
-    {
+    public function getPostsFromChildren($parent = null, $page = null, $pp = null) {
       return $this->get('posts', ['parent' => trim($parent),'page' => $page, 'per_page' => $pp]);
     }
 
@@ -145,8 +136,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function categoryPosts($cat = null, $page = null, $pp = null)
-    {
+    public function getPostsByCategory($cat = null, $page = null, $pp = null) {
         return $this->get('posts', ['categories' => trim($cat),'page' => $page, 'per_page' => $pp]);
     }
 
@@ -157,8 +147,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function authorPosts($name, $page = null)
-    {
+    public function getPostsByAuthor($name, $page = null) {
         return $this->get('posts', ['page' => $page, 'filter' => ['author_name' => $name]]);
     }
 
@@ -168,8 +157,7 @@ class WpApi
      * @param  string $cat
      * @return array
      */
-    public function latestPost($cat = null)
-    {
+    public function getLatestPostFromCategory($cat = null) {
         return $this->get('posts', ['categories' => trim($cat),'per_page' => 1,'status' => 'publish']);
     }
     
@@ -180,8 +168,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function tagPosts($tags, $page = null)
-    {
+    public function getPostsByTags($tags, $page = null) {
         return $this->get('posts', ['tags' => $tags]);
     }
 
@@ -192,8 +179,7 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function search($query, $page = null)
-    {
+    public function searchPosts($query, $page = null) {
         return $this->get('posts', ['page' => $page, 'filter' => ['s' => $query]]);
     }
 
@@ -205,9 +191,21 @@ class WpApi
      * @param  int $page
      * @return array
      */
-    public function archive($year, $month, $page = null)
-    {
+    public function getPostsByDate($year, $month, $page = null) {
         return $this->get('posts', ['page' => $page, 'filter' => ['year' => $year, 'monthnum' => $month]]);
+    }
+
+    /**
+     * Deploy a new MultiSite tenant, with random credentials
+     * 
+     * @param string $siteName
+     * @param string $blogTitle
+     * @param string $email
+     * @param string $password
+     * 
+     */
+    public function deploy($siteName, $blogTitle, $email, $password) {
+        return $this->post('wp-content/plugins/multisite-json-api/endpoints/create-site.php', ['email' => $email, 'site_name' => $siteName, 'title' => $blogTitle, 'password' => $password]);
     }
 
     /**
@@ -217,11 +215,8 @@ class WpApi
      * @param  array  $query
      * @return array
      */
-    public function get($method, array $query = array())
-    {
-
+    public function get($method, array $query = array()) {
         try {
-
             $query = ['query' => $query];
 
             if ($this->auth) {
@@ -235,7 +230,6 @@ class WpApi
                 'total'   => $response->getHeaderLine('X-WP-Total'),
                 'pages'   => $response->getHeaderLine('X-WP-TotalPages')
             ];
-
         } catch (RequestException $e) {
 
             $error['message'] = $e->getMessage();
@@ -256,5 +250,40 @@ class WpApi
         return $return;
 
     }
-}
 
+    /**
+     * Post data to the API
+     *
+     * @param  string $path
+     * @param  array  $body
+     * @return array
+     */
+    public function post($path, array $body = []) {
+        try {
+            $body = ['query' => $body];
+
+            if ($this->auth) {
+                $query['auth'] = $this->auth;
+            }
+
+            $response = $this->client->post($this->endpoint . $method, $body);
+
+            $return = [
+                'results' => json_decode((string) $response->getBody(), true)
+            ];
+        } catch (RequestException $e) {
+            $error['message'] = $e->getMessage();
+
+            if ($e->getResponse()) {
+                $error['code'] = $e->getResponse()->getStatusCode();
+            }
+
+            $return = [
+                'error'   => $error,
+                'results' => []
+            ];
+        }
+
+        return $return;
+    }
+}
