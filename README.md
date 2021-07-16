@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/threesquared/laravel-wp-api/v/stable)](https://packagist.org/packages/mainstreamct/laravel-wp-api)
 
-*Forked originally from []()*
+*Forked originally from [mattwilding/laravel-wp-api](https://github.com/mattwilding/laravel-wp-api)*
 
 Laravel 6+ package for the [Wordpress JSON REST API](https://github.com/WP-API/WP-API), with support for MultiSite tenant management automation. Uses [multisite-json-api](https://github.com/remkade/multisite-json-api) on the WordPress side of things.
 
