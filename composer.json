@@ -25,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MainstreamCT\\LaravelWpApi\\LaravelWpApiServiceProvider"
+                "MainstreamCT\\WordPressAPI\\WordPressAPIServiceProvider"
             ]
         }
     }
